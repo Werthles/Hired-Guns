@@ -1,0 +1,1187 @@
+
+//disabledAI ?
+disabledAI = 1;  
+
+// Respawn Settings
+
+// Delay in seconds before playable unit respawns.
+respawnDelay = 5;
+
+// Respawn type, 0 or "NONE" - No respawn, 1 or "BIRD" - Respawn as a seagull, 2 or "INSTANT" - Respawn just where you died, 3 or "BASE" - Respawn in base, 4 or "GROUP" - Respawn in your group (if there's no AI left, you'll become a seagull), 5 or "SIDE" - Respawn into an AI unit on your side (if there's no AI left, you'll become a seagull). With this respawn type, team switch is also available to any AI controlled playable units.
+respawn = "BASE";
+
+// 1 to execute respawn templates when a player joins the game. Available only for INSTANT and BASE respawn types.
+respawnOnStart = 0;
+
+// Delay in seconds before vehicle respawns.
+respawnVehicleDelay = "5";
+
+// Respawn templates from CfgRespawnTemplates. You can combine any number of them together.
+respawnTemplates[] = {"Base","Counter","MenuPosition","ExtraRespawnThings"};
+//"Wave","Side","MenuInventory",
+
+// Side specific respawn templates. When undefined, general respawnTemplates are used instead.
+//respawnTemplatesEast[] = {"Counter"};
+//respawnTemplatesCiv[] = {"Base","Civs"};
+
+//Show the scoreboard and respawn countdown timer for a player if he is killed with respawnType 3. Default is 1 (true).
+respawnDialog = 1;
+
+// When 1, the score table contains score of all playable units as opposed to players only.
+aiKills = 1;
+
+//Author of the mission.
+author="Werthles";
+
+//String (usually mission name) shown during mission loading.
+OnLoadName = "Hired Guns";
+
+//Displays a message while the mission is loading.
+OnLoadMission = "Work with or against the regional leaders of Altis to secure your military and political control of the island.";
+
+//define a picture to be shown while the mission is loaded.
+loadScreen = "images\loadScreen.paa";
+
+//Define whether you will see the time and date displayed while the mission loads. 1 means visible, 0 hidden.
+onLoadMissionTime = 1;
+
+//Define whether you will see the time and date displayed while the intro loads. 1 means visible, 0 hidden.
+onLoadIntroTime = 1;
+
+//Displays a message while the intro is loading.
+onLoadIntro = "Intro loading...";
+
+
+//Disable dropping items while swimming. 0 = Disable, 1 = Enable
+enableItemsDropping = 0;
+
+//By default a new player is not auto assigned a free playable slot in the mission lobby in Multiplayer. Set it to 0/false to make him auto assigned to the side with least players. 0 = Disable, 1 = Enable
+//joinUnassigned = 0;
+
+//Allow functions to log to the RPT file. Set it to 1/true to allow RPT logging. 0 = Disable, 1 = Enable
+allowFunctionsLog = 1;//true
+
+//Allows access to the Debug Console outside of the editor during normal gameplay.0 = Default behavior, available only in editor, 1 = Available in SP and for hosts / logged in admins, 2 = Available for everyone
+enableDebugConsole = 1;
+
+//Multiplayer Game Type info
+class Header
+{
+	gameType = Coop;
+	minPlayers = 1;
+	maxPlayers = 40;
+};
+
+//Switch on or off debriefing
+debriefing = 1;
+
+
+class CfgDebriefing
+{  
+	class End1
+	{
+		title = "";
+		subtitle = "";
+		description = "";
+		pictureBackground = "";
+		picture = "";
+		pictureColor[] = {0.0,0.3,0.6,1};
+	};
+	class Lose
+	{
+		title = "";
+		subtitle = "";
+		description = "";
+		pictureBackground = "";
+		picture = "";
+		pictureColor[] = {0.0,0.3,0.6,1};
+	};
+};
+
+
+
+
+
+
+
+class Params{
+	//class lengthOfMissions {
+	//	title= "Mission Length";
+	//	values[]= {3600,5400,7200,9000,10800};
+	//	texts[]= {"60 minutes","90 minutes","120 minutes","150 minutes","180 minutes"};
+	//	default= 7200;
+	//};
+	
+	//debug console
+	//#define DEBUGCONSOLE_DEFAULT	1
+	//#include "\a3\functions_f\Params\paramDebugConsole.hpp"
+	
+	//time - period
+	//#include "\a3\functions_f\Params\paramDaytimePeriod.hpp"
+	
+	//time - hour
+	
+	//#define DAYTIMEHOUR_DEFAULT	7
+	//#include "\a3\functions_f\Params\paramDaytimeHour.hpp"
+	
+
+};
+
+
+
+
+
+
+
+
+/* 
+//Let player pick a respawn loadout defined in CfgRespawnInventory in Description.ext. Loadouts can be added using BIS_fnc_addRespawnInventory function.
+class CfgRespawnInventory
+{
+	class WEST1
+	{
+		displayName = "Fred"; // Name visible in the menu
+		icon = "\A3\Ui_f\data\GUI\Cfg\Ranks\sergeant_gs.paa"; // Icon displayed next to the name//////
+
+		// Loadout definition, uses same entries as CfgVehicles classes
+		weapons[] = {
+			"arifle_MXC_F",
+			"Binocular"
+		};
+		magazines[] = {
+			"30Rnd_65x39_caseless_mag",
+			"30Rnd_65x39_caseless_mag",
+			"SmokeShell"
+		};
+		items[] = {
+			"FirstAidKit"
+		};
+		linkedItems[] = {
+			"V_Chestrig_khk",
+			"H_Watchcap_blk",
+			"optic_Aco",
+			"acc_flashlight",
+			"ItemMap",
+			"ItemCompass",
+			"ItemWatch",
+			"ItemRadio"
+		};
+		uniformClass = "U_B_CombatUniform_mcam_tshirt";
+		backpack = "B_AssaultPack_mcamo";
+	};
+	class WEST2
+	{
+		// Alternative configuration pointing to a CfgVehicles class. Loadout will be copied from it.
+		vehicle = "B_soldier_AR_F"
+	};
+}; */
+
+class CfgRespawnTemplates
+{
+	// Class used in respawnTemplates entry
+	class ExtraRespawnThings
+	{
+		// Function or script executed upon death. Parameters passed into it are the same as are passed into onPlayerKilled.sqf file
+		onPlayerKilled = "extraDeathThings.sqf";
+		// Function or script executed upon respawn. Parameters passed into it are the same as are passed into onPlayerRespawn.sqf file
+		onPlayerRespawn = "extraRespawnThings.sqf";
+		// Default respawn delay (can be overwitten by description.ext entry of the same name)
+		respawnDelay = 2;
+		// 1 to respawn player when he joins the game. Available only for INSTANT and BASE respawn types
+		// Can be overridden by description.ext attribute of the same name
+		respawnOnStart = 1;
+	};
+	//Civs
+//	class Civs
+//	{
+//		// Function or script executed upon death. Parameters passed into it are the same as are passed into onPlayerKilled.sqf file
+//		onPlayerKilled = "extraDeathThings.sqf";
+//		// Function or script executed upon respawn. Parameters passed into it are the same as are passed into onPlayerRespawn.sqf file
+//		onPlayerRespawn = "Civs.sqf";
+//		// Default respawn delay (can be overwitten by description.ext entry of the same name)
+//		//respawnDelay = 2;
+//		// 1 to respawn player when he joins the game. Available only for INSTANT and BASE respawn types
+//		// Can be overridden by description.ext attribute of the same name
+//		//respawnOnStart = 1;
+//	};
+	class Spectator
+	{
+		onPlayerRespawn = "BIS_fnc_respawnSpectator";
+	};
+};
+
+
+class CfgIdentities
+{
+	class Landlord
+	{
+		name="The Landlord";
+		face="whitehead_20";
+		nameSound = "landlord";  
+	     	glasses="None";
+	    	speaker="Male01ENG";
+	    	pitch=1;
+		
+	};
+	class Drimean
+	{
+		name="The Drimean Warlord";
+		face="whitehead_20";
+		nameSound = "Drimean";  
+	     	glasses="None";
+	    	speaker="Male01ENG";
+	    	pitch=1;
+		
+	};
+	class Pirate
+	{
+		name="The Pirate";
+		face="whitehead_20";
+		nameSound = "Pirate";  
+	     	glasses="None";
+	    	speaker="Male01ENG";
+	    	pitch=1;
+		
+	};
+	class Banker
+	{
+		name="The Banker";
+		face="whitehead_20";
+		nameSound = "Banker";  
+	     	glasses="None";
+	    	speaker="Male01ENG";
+	    	pitch=1;
+		
+	};
+	class Oreokastron
+	{
+		name="The Oreokastron";
+		face="whitehead_20";
+		nameSound = "Oreokastron";  
+	     	glasses="None";
+	    	speaker="Male01ENG";
+	    	pitch=1;
+		
+	};
+	class CSATOfficer
+	{
+		name="CSAT Officer";
+		face="whitehead_20";
+		nameSound = "Officer";  
+	     	glasses="None";
+	    	speaker="Male01ENG";
+	    	pitch=1;
+		
+	};
+	class FIAOfficer
+	{
+		name="FIA Officer";
+		face="whitehead_20";
+		nameSound = "Officer";  
+	     	glasses="None";
+	    	speaker="Male01ENG";
+	    	pitch=1;
+		
+	};
+	class Armourer
+	{
+		name="The Armourer";
+		face="whitehead_20";
+		nameSound = "Armourer";  
+	     	glasses="None";
+	    	speaker="Male01ENG";
+	    	pitch=1;
+		
+	};
+	class Pilot
+	{
+		name="The Pilot";
+		face="whitehead_20";
+		nameSound = "Pilot";  
+	     	glasses="None";
+	    	speaker="Male01ENG";
+	    	pitch=1;
+		
+	};
+	class Priest
+	{
+		name="The Priest";
+		face="whitehead_20";
+		nameSound = "Priest";  
+	     	glasses="None";
+	    	speaker="Male01ENG";
+	    	pitch=1;
+		
+	};
+};
+
+class CfgNotifications
+{
+	//class Default
+	//{
+		//title = ""; // Tile displayed as text on black background. Filled by arguments.
+		//iconPicture = ""; // Small icon displayed in left part. Colored by "color", filled by arguments.
+		//iconText = ""; // Short text displayed over the icon. Colored by "color", filled by arguments.
+		//description = ""; // Brief description displayed as structured text. Colored by "color", filled by arguments.
+		//color[] = {1,0.5,0.5,1}; // Icon and text color
+		//duration = 5; // How many seconds will the notification be displayed
+		//priority = 0; // Priority; higher number = more important; tasks in queue are selected by priority
+		//difficulty[] = {}; // Required difficulty settings. All listed difficulties has to be enabled
+	//};
+ 
+	// Examples
+ 	class TaskAssigned
+	{
+		title = "NEW JOB";
+		iconPicture = "\A3\ui_f\data\map\mapcontrol\taskIcon_ca.paa";
+		description = "%2";
+		duration = 8;
+		color[] = {1,1,1,1}; // Icon and text color
+		priority = 7;
+	};
+	class TaskSucceeded
+	{
+		title = "JOB COMPLETED";
+		description = "%2";
+		iconPicture = "\A3\ui_f\data\map\mapcontrol\taskicondone_ca.paa";
+		color[] = {0,1,0,1};
+		duration = 8;
+		priority = 7;
+	};
+	class TaskCanceled
+	{
+		title = "JOB CANCELLED";
+		description = "%2";
+		iconPicture = "\A3\ui_f\data\map\mapcontrol\taskiconcanceled_ca.paa";
+		color[] = {1,0.6,0.7,0.8};
+		priority = 7;
+	};
+	class TaskFailed
+	{
+		title = "JOB FAILED";
+		description = "%2";
+		iconPicture = "\A3\ui_f\data\map\mapcontrol\taskiconfailed_ca.paa";
+		color[] = {1,0,0,1};
+		priority = 7;
+	};
+	/* class ScoreAdded
+	{
+		title = "Score bonus";
+		iconText = "+%2";
+		description = "%1";
+		color[] = {0.5,1,1,1};
+		priority = 0;
+		difficulty[] = {"netStats"};
+	};  */
+};
+
+class RscPicture 
+{ 
+    access=0; 
+    type=0; 
+    idc=-1; 
+    style=48; 
+    colorBackground[]={0,0,0,0}; 
+    colorText[]={1,1,1,1}; 
+    font="TahomaB"; 
+    sizeEx=0; 
+    lineSpacing=0; 
+    text=""; 
+};
+class RscText
+{
+    access = 0;
+    type = 0;
+    idc = -1;
+    style = 0;
+    w = 0.1;
+    h = 0.05;
+    font = "TahomaB";
+    sizeEx = 0.04;
+    colorBackground[] = {0,0,0,0};
+    colorText[] = {1,1,1,1};
+    text = "";
+    fixedWidth = 0;
+    shadow = 0;
+};
+
+class RscTitles
+{
+    titles[] = {introImage}; // optional
+
+    class introImage
+    {    
+        idd = -1;    
+        movingEnable = false;
+        duration = 2; // 2 second display time
+        fadein = 3; // 1 second fade in - 3 seconds in all.
+        name = "IntroImage"; 
+
+        //class ControlsBackground
+        //{
+            //class Background : RscText //Black background for letterboxing in case of a different aspect ratio than the image
+            //{
+               //x = "safeZoneX";
+               //y = "safeZoneY";
+               //w = "safeZoneW";
+               //h = "safeZoneH";
+               //colorBackground[] = {0,0,0,1};
+           //};
+        //};
+        class Controls
+        {
+            class image1: RscPicture
+            {    
+                x = "safeZoneX";
+                y = "safeZoneY+((safeZoneH-(safeZoneW/(2048/1024)*(4/3)))/2)"; //Substitute 2048 and 1024 for the x,y dimensions of your image
+                w = "safeZoneW";
+                h = "safeZoneW/(2048/1024)*(4/3)"; //Substitute 2048 and 1024 for the x,y dimensions of your image
+                text = "HiredGuns.paa";
+            };
+        };
+    };
+};
+
+class CfgSounds
+{
+   	sounds[] =
+      	{
+			0a0, 0a1, 0a2, 0a3, 0a4, 0a5, 0a6, 0a7, 0a8, 0a9, 0a10,
+         	1a0, 1a1, 1a2, 1a3, 1a4, 1a5, 1a6, 1a7, 1a8, 1a9, 1a10,
+         	2a0, 2a1, 2a2, 2a3, 2a4, 2a5, 2a6, 2a7, 2a8, 2a9, 2a10,
+         	3a0, 3a1, 3a2, 3a3, 3a4, 3a5, 3a6, 3a7, 3a8, 3a9, 3a10,
+         	4a0, 4a1, 4a2, 4a3, 4a4, 4a5, 4a6, 4a7, 4a8, 4a9, 4a10,
+         	5a0, 5a1, 5a2, 5a3, 5a4, 5a5, 5a6, 5a7, 5a8, 5a9, 5a10,
+         	6a0, 6a1, 6a2, 6a3, 6a4, 6a5, 6a6, 6a7, 6a8, 6a9, 6a10,
+         	7a0, 7a1, 7a2, 7a3, 7a4, 7a5, 7a6, 7a7, 7a8, 7a9, 7a10,
+         	8a0, 8a1, 8a2, 8a3, 8a4, 8a5, 8a6, 8a7, 8a8, 8a9, 8a10,
+         	9a0, 9a1, 9a2, 9a3, 9a4, 9a5, 9a6, 9a7, 9a8, 9a9, 9a10
+      	};
+   	class 0a0
+   	{
+      		name = "0a0";
+      		sound[] = {"\sounds\0a0.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 0a1
+   	{
+      		name = "0a1";
+      		sound[] = {"\sounds\0a1.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 0a2
+   	{
+      		name = "0a2";
+      		sound[] = {"\sounds\0a2.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 0a3
+   	{
+      		name = "0a3";
+      		sound[] = {"\sounds\0a3.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 0a4
+   	{
+      		name = "0a4";
+      		sound[] = {"\sounds\0a4.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 0a5
+   	{
+      		name = "0a5";
+      		sound[] = {"\sounds\0a5.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 0a6
+   	{
+      		name = "0a6";
+      		sound[] = {"\sounds\0a6.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 0a7
+   	{
+      		name = "0a7";
+      		sound[] = {"\sounds\0a7.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 0a8
+   	{
+      		name = "0a8";
+      		sound[] = {"\sounds\0a8.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 0a9
+   	{
+      		name = "0a9";
+      		sound[] = {"\sounds\0a9.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 0a10
+   	{
+      		name = "0a10";
+      		sound[] = {"\sounds\0a10.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 1a0
+   	{
+      		name = "1a0";
+      		sound[] = {"\sounds\1a0.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 1a1
+   	{
+      		name = "1a1";
+      		sound[] = {"\sounds\1a1.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 1a2
+   	{
+      		name = "1a2";
+      		sound[] = {"\sounds\1a2.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 1a3
+   	{
+      		name = "1a3";
+      		sound[] = {"\sounds\1a3.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 1a4
+   	{
+      		name = "1a4";
+      		sound[] = {"\sounds\1a4.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 1a5
+   	{
+      		name = "1a5";
+      		sound[] = {"\sounds\1a5.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 1a6
+   	{
+      		name = "1a6";
+      		sound[] = {"\sounds\1a6.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 1a7
+   	{
+      		name = "1a7";
+      		sound[] = {"\sounds\1a7.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 1a8
+   	{
+      		name = "1a8";
+      		sound[] = {"\sounds\1a8.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 1a9
+   	{
+      		name = "1a9";
+      		sound[] = {"\sounds\1a9.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 1a10
+   	{
+      		name = "1a10";
+      		sound[] = {"\sounds\1a10.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 2a0
+   	{
+      		name = "2a0";
+      		sound[] = {"\sounds\2a0.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 2a1
+   	{
+      		name = "2a1";
+      		sound[] = {"\sounds\2a1.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 2a2
+   	{
+      		name = "2a2";
+      		sound[] = {"\sounds\2a2.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 2a3
+   	{
+      		name = "2a3";
+      		sound[] = {"\sounds\2a3.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 2a4
+   	{
+      		name = "2a4";
+      		sound[] = {"\sounds\2a4.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 2a5
+   	{
+      		name = "2a5";
+      		sound[] = {"\sounds\2a5.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 2a6
+   	{
+      		name = "2a6";
+      		sound[] = {"\sounds\2a6.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 2a7
+   	{
+      		name = "2a7";
+      		sound[] = {"\sounds\2a7.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 2a8
+   	{
+      		name = "2a8";
+      		sound[] = {"\sounds\2a8.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 2a9
+   	{
+      		name = "2a9";
+      		sound[] = {"\sounds\2a9.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 2a10
+   	{
+      		name = "2a10";
+      		sound[] = {"\sounds\2a10.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 3a0
+   	{
+      		name = "3a0";
+      		sound[] = {"\sounds\3a0.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 3a1
+   	{
+      		name = "3a1";
+      		sound[] = {"\sounds\3a1.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 3a2
+   	{
+      		name = "3a2";
+      		sound[] = {"\sounds\3a2.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 3a3
+   	{
+      		name = "3a3";
+      		sound[] = {"\sounds\3a3.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 3a4
+   	{
+      		name = "3a4";
+      		sound[] = {"\sounds\3a4.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 3a5
+   	{
+      		name = "3a5";
+      		sound[] = {"\sounds\3a5.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 3a6
+   	{
+      		name = "3a6";
+      		sound[] = {"\sounds\3a6.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 3a7
+   	{
+      		name = "3a7";
+      		sound[] = {"\sounds\3a7.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 3a8
+   	{
+      		name = "3a8";
+      		sound[] = {"\sounds\3a8.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 3a9
+   	{
+      		name = "3a9";
+      		sound[] = {"\sounds\3a9.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 3a10
+   	{
+      		name = "3a10";
+      		sound[] = {"\sounds\3a10.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 4a0
+   	{
+      		name = "4a0";
+      		sound[] = {"\sounds\4a0.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 4a1
+   	{
+      		name = "4a1";
+      		sound[] = {"\sounds\4a1.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 4a2
+   	{
+      		name = "4a2";
+      		sound[] = {"\sounds\4a2.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 4a3
+   	{
+      		name = "4a3";
+      		sound[] = {"\sounds\4a3.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 4a4
+   	{
+      		name = "4a4";
+      		sound[] = {"\sounds\4a4.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 4a5
+   	{
+      		name = "4a5";
+      		sound[] = {"\sounds\4a5.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 4a6
+   	{
+      		name = "4a6";
+      		sound[] = {"\sounds\4a6.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 4a7
+   	{
+      		name = "4a7";
+      		sound[] = {"\sounds\4a7.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 4a8
+   	{
+      		name = "4a8";
+      		sound[] = {"\sounds\4a8.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 4a9
+   	{
+      		name = "4a9";
+      		sound[] = {"\sounds\4a9.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 4a10
+   	{
+      		name = "4a10";
+      		sound[] = {"\sounds\4a10.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 5a0
+   	{
+      		name = "5a0";
+      		sound[] = {"\sounds\5a0.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 5a1
+   	{
+      		name = "5a1";
+      		sound[] = {"\sounds\5a1.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 5a2
+   	{
+      		name = "5a2";
+      		sound[] = {"\sounds\5a2.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 5a3
+   	{
+      		name = "5a3";
+      		sound[] = {"\sounds\5a3.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 5a4
+   	{
+      		name = "5a4";
+      		sound[] = {"\sounds\5a4.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 5a5
+   	{
+      		name = "5a5";
+      		sound[] = {"\sounds\5a5.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 5a6
+   	{
+      		name = "5a6";
+      		sound[] = {"\sounds\5a6.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 5a7
+   	{
+      		name = "5a7";
+      		sound[] = {"\sounds\5a7.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 5a8
+   	{
+      		name = "5a8";
+      		sound[] = {"\sounds\5a8.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 5a9
+   	{
+      		name = "5a9";
+      		sound[] = {"\sounds\5a9.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 5a10
+   	{
+      		name = "5a10";
+      		sound[] = {"\sounds\5a10.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 6a0
+   	{
+      		name = "6a0";
+      		sound[] = {"\sounds\6a0.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 6a1
+   	{
+      		name = "6a1";
+      		sound[] = {"\sounds\6a1.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 6a2
+   	{
+      		name = "6a2";
+      		sound[] = {"\sounds\6a2.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 6a3
+   	{
+      		name = "6a3";
+      		sound[] = {"\sounds\6a3.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 6a4
+   	{
+      		name = "6a4";
+      		sound[] = {"\sounds\6a4.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 6a5
+   	{
+      		name = "6a5";
+      		sound[] = {"\sounds\6a5.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 6a6
+   	{
+      		name = "6a6";
+      		sound[] = {"\sounds\6a6.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 6a7
+   	{
+      		name = "6a7";
+      		sound[] = {"\sounds\6a7.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 6a8
+   	{
+      		name = "6a8";
+      		sound[] = {"\sounds\6a8.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 6a9
+   	{
+      		name = "6a9";
+      		sound[] = {"\sounds\6a9.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 6a10
+   	{
+      		name = "6a10";
+      		sound[] = {"\sounds\6a10.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 7a0
+   	{
+      		name = "7a0";
+      		sound[] = {"\sounds\7a0.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 7a1
+   	{
+      		name = "7a1";
+      		sound[] = {"\sounds\7a1.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 7a2
+   	{
+      		name = "7a2";
+      		sound[] = {"\sounds\7a2.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 7a3
+   	{
+      		name = "7a3";
+      		sound[] = {"\sounds\7a3.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 7a4
+   	{
+      		name = "7a4";
+      		sound[] = {"\sounds\7a4.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 7a5
+   	{
+      		name = "7a5";
+      		sound[] = {"\sounds\7a5.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 7a6
+   	{
+      		name = "7a6";
+      		sound[] = {"\sounds\7a6.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 7a7
+   	{
+      		name = "7a7";
+      		sound[] = {"\sounds\7a7.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 7a8
+   	{
+      		name = "7a8";
+      		sound[] = {"\sounds\7a8.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 7a9
+   	{
+      		name = "7a9";
+      		sound[] = {"\sounds\7a9.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 7a10
+   	{
+      		name = "7a10";
+      		sound[] = {"\sounds\7a10.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 8a0
+   	{
+      		name = "8a0";
+      		sound[] = {"\sounds\8a0.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 8a1
+   	{
+      		name = "8a1";
+      		sound[] = {"\sounds\8a1.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 8a2
+   	{
+      		name = "8a2";
+      		sound[] = {"\sounds\8a2.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 8a3
+   	{
+      		name = "8a3";
+      		sound[] = {"\sounds\8a3.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 8a4
+   	{
+      		name = "8a4";
+      		sound[] = {"\sounds\8a4.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 8a5
+   	{
+      		name = "8a5";
+      		sound[] = {"\sounds\8a5.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 8a6
+   	{
+      		name = "8a6";
+      		sound[] = {"\sounds\8a6.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 8a7
+   	{
+      		name = "8a7";
+      		sound[] = {"\sounds\8a7.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 8a8
+   	{
+      		name = "8a8";
+      		sound[] = {"\sounds\8a8.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 8a9
+   	{
+      		name = "8a9";
+      		sound[] = {"\sounds\8a9.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 8a10
+   	{
+      		name = "8a10";
+      		sound[] = {"\sounds\8a10.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 9a0
+   	{
+      		name = "9a0";
+      		sound[] = {"\sounds\9a0.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 9a1
+   	{
+      		name = "9a1";
+      		sound[] = {"\sounds\9a1.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 9a2
+   	{
+      		name = "9a2";
+      		sound[] = {"\sounds\9a2.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 9a3
+   	{
+      		name = "9a3";
+      		sound[] = {"\sounds\9a3.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 9a4
+   	{
+      		name = "9a4";
+      		sound[] = {"\sounds\9a4.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 9a5
+   	{
+      		name = "9a5";
+      		sound[] = {"\sounds\9a5.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 9a6
+   	{
+      		name = "9a6";
+      		sound[] = {"\sounds\9a6.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 9a7
+   	{
+      		name = "9a7";
+      		sound[] = {"\sounds\9a7.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 9a8
+   	{
+      		name = "9a8";
+      		sound[] = {"\sounds\9a8.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 9a9
+   	{
+      		name = "9a9";
+      		sound[] = {"\sounds\9a9.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 9a10
+   	{
+      		name = "9a10";
+      		sound[] = {"\sounds\9a10.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 0a
+   	{
+      		name = "0a";
+      		sound[] = {"\sounds\0a.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 1a
+   	{
+      		name = "1a";
+      		sound[] = {"\sounds\1a.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 2a
+   	{
+      		name = "2a";
+      		sound[] = {"\sounds\2a.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 3a
+   	{
+      		name = "3a";
+      		sound[] = {"\sounds\3a.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 4a
+   	{
+      		name = "4a";
+      		sound[] = {"\sounds\4a.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 5a
+   	{
+      		name = "5a";
+      		sound[] = {"\sounds\5a.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 6a
+   	{
+      		name = "6a";
+      		sound[] = {"\sounds\6a.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 7a
+   	{
+      		name = "7a";
+      		sound[] = {"\sounds\7a.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 8a
+   	{
+      		name = "8a";
+      		sound[] = {"\sounds\8a.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 9a
+   	{
+      		name = "9a";
+      		sound[] = {"\sounds\9a.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+   	class 10a
+   	{
+      		name = "10a";
+      		sound[] = {"\sounds\10a.ogg", 1, 1.0};
+      		titles[] = {   };
+   	};
+};
+
